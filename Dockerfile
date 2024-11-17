@@ -1,14 +1,18 @@
-FROM python:3.8-slim
+# Usar una imagen base de Python
+FROM python:3.10-slim
 
-# Instalar dependencias
-RUN pip install --no-cache-dir pandas scikit-learn fastapi uvicorn hyperopt optuna joblib pyarrow
-
-# Copiar archivos al contenedor
-COPY . /app
+# Establecer directorio de trabajo en el contenedor
 WORKDIR /app
 
-# Exponer el puerto para la API
+# Copiar los archivos del proyecto al contenedor
+COPY . /app
+
+# Instalar las dependencias
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Exponer el puerto que usará FastAPI
 EXPOSE 8000
 
-# Comando de entrada
-CMD ["python", "main.py"]
+# Comando para iniciar la aplicación
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+
