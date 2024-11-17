@@ -1,23 +1,14 @@
-# Start your image with a node base image
-FROM node:18-alpine
+FROM python:3.8-slim
 
-# The /app directory should act as the main application directory
+# Instalar dependencias
+RUN pip install --no-cache-dir pandas scikit-learn fastapi uvicorn hyperopt optuna joblib pyarrow
+
+# Copiar archivos al contenedor
+COPY . /app
 WORKDIR /app
 
-# Copy the app package and package-lock.json file
-COPY package*.json ./
+# Exponer el puerto para la API
+EXPOSE 8000
 
-# Copy local directories to the current local directory of our docker image (/app)
-COPY ./src ./src
-COPY ./public ./public
-
-# Install node packages, install serve, build the app, and remove dependencies at the end
-RUN npm install \
-    && npm install -g serve \
-    && npm run build \
-    && rm -fr node_modules
-
-EXPOSE 3000
-
-# Start the app using serve command
-CMD [ "serve", "-s", "build" ]
+# Comando de entrada
+CMD ["python", "main.py"]
